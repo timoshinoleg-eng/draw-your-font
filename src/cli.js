@@ -7,7 +7,7 @@ const { parseArgs } = require('node:util');
 const USAGE = `draw-your-font - turn a photo of your handwriting into a real font
 
 Usage:
-  draw-your-font template [-o template.pdf] [--charset minimal|spanish]
+  draw-your-font template [-o template.pdf] [--charset minimal|spanish|cyrillic]
   draw-your-font segment <photo...> [-d workdir] [--delta N] [--cap N]
   draw-your-font build   [-d workdir] (--labels labels.json | --chars "ABC…" | --charset name)
                          [--name "My Handwriting"] [-o font] [--smooth 0..2]

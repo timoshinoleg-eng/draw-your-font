@@ -49,6 +49,27 @@ set('~', [220, 420]);
 set('^', [450, CAP]);
 set('¿¡', [DESC, XH]);
 
+// --- Cyrillic (Russian). Mirrors the Latin band logic but for the 33 Russian
+// letters. The vertical classes map onto the same em-square zones (cap, x-height,
+// ascender, descender, mark-above). Letters are grouped by their height class.
+
+// Uppercase base — all reach cap height, like Latin capitals.
+set('АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', [0, CAP]);
+// Uppercase with a diacritic (Й breve, Ё dieresis) reach above cap, like Ñ.
+set('ЙЁ', [0, ASCENT]);
+// Lowercase with a mark above (й, ё) sit at x-height + mark room, like ñ.
+set('йё', [0, ASC]);
+// Lowercase ascender — б has a stem rising above x-height, like Latin b/d.
+set('б', [0, ASC]);
+// Lowercase ф is tall (two large bowls); place near ascender height.
+set('ф', [0, ASC]);
+// Lowercase descenders — р and у drop below baseline, like Latin g/p/q/y.
+set('ру', [DESC, XH]);
+// Lowercase with a short tail (ц, щ) — small descender for the tail only.
+set('цщ', [-90, XH]);
+// Lowercase base — the rest sit at x-height between baseline and x-line.
+set('авгдежзиклмнопстхчшъыьэюя', [0, XH]);
+
 function band(char) {
   return BANDS.get(char) || [0, CAP];
 }
