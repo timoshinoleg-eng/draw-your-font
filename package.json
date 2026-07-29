@@ -26,7 +26,8 @@
     "test:unit": "node test/unit.js",
     "test:max": "node test/e2e-max.js",
     "test:live": "node test/e2e-live.js",
-    "test:all": "node test/unit.js && node test/e2e.js && node test/e2e-max.js && node test/e2e-live.js",
+    "test:cyr": "node test/e2e-cyrillic.js",
+    "test:all": "node test/unit.js && node test/e2e.js && node test/e2e-cyrillic.js && node test/e2e-max.js && node test/e2e-live.js",
     "build:demo": "esbuild site/demo.src.js --bundle --minify --format=iife --outfile=site/demo.js --external:node:fs --external:wawoff2 --log-level=error"
   },
   "keywords": [
