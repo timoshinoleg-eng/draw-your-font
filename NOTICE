@@ -1,0 +1,25 @@
+draw-your-font
+==============
+
+This project is a derivative work, licensed under the MIT License (see LICENSE).
+
+Original work:
+  Copyright (c) 2026 Danilo Znamerovszkij
+  https://github.com/danilo-znamerovszkij/draw-your-font
+
+Modifications (the "max" quality track and the "live font" feature):
+  Copyright (c) 2026 Oleg Timoshin
+  https://github.com/timoshinoleg-eng/draw-your-font
+
+These modifications add:
+  - A max quality track (--quality max): cubic-bezier tracing via img2bez
+    into a UFO source, compiled to OTF (CFF) via fonttools. Smoother organic
+    curves than the base potrace/svg2ttf/TTF path.
+  - The "live font": authentic handwriting variation via a GSUB calt feature
+    that cycles real redrawn glyph variants, so repeated letters differ.
+  - Auto-labeling via the Hungarian algorithm, ligature (liga) generation,
+    reference-free glyph quality scoring (qc), and UPM-consistent metrics.
+
+The original draw-your-font project and all of its authors retain their
+copyright; this NOTICE records the provenance of the modifications as required
+by the MIT License.

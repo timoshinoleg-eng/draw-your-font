@@ -59,11 +59,64 @@ binary. Works on macOS / Linux / Windows wherever Node ≥ 18 runs.
 | `segment <photos…>` | find letters → crops + numbered contact sheet + `blobs.json` |
 | `build` | labeled crops → font (`--labels` / `--chars` / `--charset`) |
 | `make <photos…>` | segment + build in one shot |
+| `autolabel` | fallback: assign blobs to chars by shape (Hungarian algorithm) → `labels.json` |
+| `qc` | score each glyph's trace quality (max track) → `qc-report.json` + weakest flagged |
 | `preview` | render any text with the built font |
 
 Refinement flags: `--smooth 0..2` (rounder curves), `--weight=-2..2`
 (thinner/bolder), `--formats ttf,woff,woff2,css` (web-ready + `@font-face`
 snippet). Run `draw-your-font --help` for everything.
+
+### Maximum quality: cubic-bezier OTF (`--quality max`)
+
+The default track (potrace → quadratic `glyf` → TTF) is fast and needs nothing
+beyond Node. For the smoothest organic curves — the kind a professional
+type designer ships for handwriting/script faces — switch to the **max track**:
+
+```
+photo ──► img2bez (cubic bezier) ──► UFO ──► fonttools (CFF + GSUB) ──► OTF
+```
+
+`img2bez` traces each crop to **cubic** Bézier outlines with structure a font
+needs (extrema points, H/V handles, G2-harmonized joins), writing directly into
+a UFO source. `fonttools` then compiles it to an OTF with a `CFF` table — fewer
+points, smoother transitions, the format professional handwriting fonts ship in.
+
+```bash
+npx draw-your-font make photo.jpg --chars "ABCabc" --name "My Hand" --quality max --formats otf,woff2
+```
+
+The max track needs two extra (free, MIT) components: the `img2bez` binary
+(build it with `cargo build --release` in its repo, or `cargo install --git
+https://github.com/eliheuer/img2bez`) and Python with `fonttools`/`ufo2ft`
+(`pip install fonttools ufo2ft ufoLib2 brotli`). Point the CLI at the binary via
+the `DYF_IMG2BEZ` env var (or put it on PATH).
+
+### The "live" font: authentic variation via `calt`
+
+Every existing handwriting font looks robotic in a paragraph — each `a` is
+identical. Real handwriting isn't. The max track can build a **live font**: feed
+it several photos of the same letters, and it embeds each redrawn variant as a
+named alternate, then wires them into a **GSUB `calt`** (Contextual Alternates)
+feature that cycles them so consecutive identical letters differ. The variation
+is *your real handwriting redrawn*, not synthetic jitter noise.
+
+**One-liner** — the duplicates across photos auto-promote to variants, no manual
+labeling:
+
+```bash
+# two photos of the same alphabet → a font where 'a' varies each time it repeats
+npx draw-your-font make photo1.jpg photo2.jpg --chars "ABCabc" --quality max \
+  --name "My Hand" --formats otf
+```
+
+The CLI detects that there are more glyphs than unique characters and turns the
+extra occurrences into `calt` alternates automatically. For full control (e.g.
+only some letters should vary), segment first and pass an explicit `--labels`
+plus a `--variants` JSON mapping each letter to its extra crop paths.
+
+Why `calt` and not `rand`: `rand` works almost only in InDesign; `calt` ships in
+every modern browser, so the live font actually works on the web.
 
 ## How it works
 
@@ -88,8 +141,12 @@ handwriting.
 servers and a browser editor. Here your machine does the work and the agent
 is the editor.
 
-**Kerning, ligatures, letter randomization?** v2. The pipeline (fonttools
-`calt`) is planned; the current output is a clean single-variant font.
+**Kerning, ligatures, letter randomization?** Yes — on the max track
+(`--quality max`). Letter randomization is the "live font" above: real redrawn
+variants cycled via `calt`. Ligatures (`liga`) and kerning (`kern`) are wired in
+through an explicit `.fea` file passed via `--features`. The base track
+(`--quality base`, the default) ships a clean single-variant font with no
+OpenType layout features — fast and dependency-free.
 
 ## License
 

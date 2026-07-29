@@ -1,8 +1,13 @@
 {
   "name": "draw-your-font",
-  "version": "0.1.0",
-  "description": "Turn a photo of your handwriting into a real font (TTF/WOFF/WOFF2) - free, open source, no uploads.",
+  "version": "0.2.0",
+  "description": "Turn a photo of your handwriting into a real font (TTF/WOFF/WOFF2/OTF) - free, open source, no uploads. Base (potrace) and max (cubic-bezier + live font) quality tracks.",
+  "author": "Oleg Timoshin (modifications); Danilo Znamerovszkij (original)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timoshinoleg-eng/draw-your-font.git"
+  },
   "bin": {
     "draw-your-font": "src/cli.js"
   },
@@ -17,7 +22,11 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node test/e2e.js",
+    "test": "node test/unit.js && node test/e2e.js",
+    "test:unit": "node test/unit.js",
+    "test:max": "node test/e2e-max.js",
+    "test:live": "node test/e2e-live.js",
+    "test:all": "node test/unit.js && node test/e2e.js && node test/e2e-max.js && node test/e2e-live.js",
     "build:demo": "esbuild site/demo.src.js --bundle --minify --format=iife --outfile=site/demo.js --external:node:fs --external:wawoff2 --log-level=error"
   },
   "keywords": [
@@ -29,10 +38,6 @@
     "claude-skill",
     "handwriting-font"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/danilo-znamerovszkij/draw-your-font.git"
-  },
   "dependencies": {
     "pdfkit": "^0.15.0",
     "potrace": "^2.1.8",

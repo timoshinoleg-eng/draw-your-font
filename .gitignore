@@ -5,6 +5,12 @@ node_modules/
 work/
 work-*/
 test/tmp/
+test/tmp-*/
+
+# max-track intermediate artifacts (UFO sources, weight-adjusted crops)
+*.ufo
+.tmpweight.png
+calt.fea
 
 # generated artifacts at repo root (font files & templates users produce)
 /*.ttf
